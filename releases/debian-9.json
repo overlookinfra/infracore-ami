@@ -1,0 +1,8 @@
+{
+  "distro": "debian",
+  "distro_version": "9",
+  "source_ami_filter_name": "name",
+  "source_ami_filter_value": "debian-stretch-*",
+  "source_ami_owner": "379101102735",
+  "source_ami_user": "admin"
+}

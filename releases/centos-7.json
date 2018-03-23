@@ -1,0 +1,8 @@
+{
+  "distro": "centos",
+  "distro_version": "7",
+  "source_ami_filter_name": "product-code",
+  "source_ami_filter_value": "aw0evgkw8e5c1q413zgy5pjce",
+  "source_ami_owner": "aws-marketplace",
+  "source_ami_user": "centos"
+}

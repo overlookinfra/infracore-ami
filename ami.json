@@ -1,0 +1,71 @@
+{
+  "variables": {
+    "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+    "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}",
+    "aws_session_token": "{{env `AWS_SESSION_TOKEN`}}",
+    "autosign_token": "{{env `AUTOSIGN_TOKEN`}}",
+    "distro": "",
+    "distro_version": "",
+    "timestamp": "{{isotime}}",
+    "source_ami_filter_name": "name",
+    "source_ami_filter_value": "*",
+    "source_ami_owner": "",
+    "source_ami_user": ""
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "access_key": "{{user `aws_access_key`}}",
+    "secret_key": "{{user `aws_secret_key`}}",
+    "token": "{{user `aws_session_token`}}",
+    "region": "us-west-2",
+    "tags": {
+      "created_by": "daniel.parks@puppet.com",
+      "department": "SRE",
+      "project": "Daniel fools with Packer",
+      "distro": "{{user `distro`}}",
+      "distro_version": "{{user `distro_version`}}",
+      "Name": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
+    },
+    "snapshot_tags": {
+      "created_by": "daniel.parks@puppet.com",
+      "department": "SRE",
+      "project": "Daniel fools with Packer",
+      "ami": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}",
+      "Name": "AMI infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
+    },
+    "run_tags": {
+      "created_by": "daniel.parks@puppet.com",
+      "department": "SRE",
+      "project": "Daniel fools with Packer",
+      "lifetime": "1h"
+    },
+    "source_ami_filter": {
+      "filters": {
+        "architecture": "x86_64",
+        "root-device-type": "ebs",
+        "state": "available",
+        "virtualization-type": "hvm",
+        "{{user `source_ami_filter_name`}}": "{{user `source_ami_filter_value`}}"
+      },
+      "owners": ["{{user `source_ami_owner`}}"],
+      "most_recent": true
+    },
+    "instance_type": "t2.micro",
+    "subnet_id": "subnet-5d2df02a",
+    "availability_zone": "us-west-2a",
+    "ssh_username": "{{user `source_ami_user`}}",
+    "ami_name": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
+      "environment_vars": [
+        "autosign_token={{user `autosign_token`}}"
+      ],
+      "scripts": [
+        "scripts/base.sh"
+      ]
+    }
+  ]
+}
