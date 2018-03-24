@@ -8,11 +8,12 @@ if [ -z "$1" ] ; then
 fi
 
 source $(command -v assume-role)
-assume-role ops Administrator
 
-export AUTOSIGN_TOKEN=$(./generate-autosign-token.sh)
-
-packer build -var-file "$1" ami.json
+for release in "$@" ; do
+  assume-role ops Administrator
+  export AUTOSIGN_TOKEN=$(./generate-autosign-token.sh)
+  packer build -var-file "$release" ami.json
+done
 
 echo Purging build nodes
 ssh pe-mom1-prod.ops.puppetlabs.net \
