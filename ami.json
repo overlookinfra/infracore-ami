@@ -61,14 +61,13 @@
   }],
   "provisioners": [
     {
+      "type": "file",
+      "source": "package",
+      "destination": "."
+    },
+    {
       "type": "shell",
-      "execute_command": "sudo -i sh -c '{{ .Vars }} {{ .Path }}'",
-      "environment_vars": [
-        "autosign_token={{user `autosign_token`}}"
-      ],
-      "scripts": [
-        "scripts/base.sh"
-      ]
+      "inline": "sudo bash package/provision-ami.sh package '{{user `autosign_token`}}'"
     }
   ]
 }
