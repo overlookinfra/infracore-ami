@@ -56,7 +56,8 @@
     "ssh_interface": "private_ip",
     "availability_zone": "us-west-2a",
     "ssh_username": "{{user `source_ami_user`}}",
-    "ami_name": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
+    "ami_name": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}",
+    "user_data": "#cloud-config\nhostname: aws-template-dev-1\nfqdn: aws-template-dev-1.ops.puppetlabs.net\n"
   }],
   "provisioners": [
     {

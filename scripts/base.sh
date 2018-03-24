@@ -21,21 +21,12 @@ fi
 
 # 169.254.169.254 is the AWS EC2 metadata service
 cloud_id=$(curl -sS http://169.254.169.254/latest/meta-data/instance-id | tr -d -)
-
-hostname=aws-template-dev-1
-domain=ops.puppetlabs.net
-puppet_environment=production
-fqdn=${hostname}.${domain}
-cert_hostname=${hostname}-${cloud_id}
-certname=${cert_hostname}.certs.puppet.net
-
-hostname $fqdn
+certname=$(hostname -s)-${cloud_id}.certs.puppet.net
 
 # Install Puppet, but don't run it
 curl -sSk https://puppetca.ops.puppetlabs.net:8140/packages/current/install.bash \
   | bash -s -- \
     "agent:certname=$certname" \
-    "agent:environment=$puppet_environment" \
     --puppet-service-ensure stopped \
     --puppet-service-enable false
 
@@ -43,7 +34,7 @@ cat <<EOF >$(puppet config --section main print confdir)/csr_attributes.yaml
 custom_attributes:
   challengePassword: "${autosign_token}"
 extension_requests:
-  pp_network: "$domain"
+  pp_network: "$(hostname -d)"
   pp_cloudplatform: aws
   pp_instance_id: "$(curl -sS http://169.254.169.254/latest/meta-data/instance-id)"
   pp_zone: "$(curl -sS http://169.254.169.254/latest/meta-data/placement/availability-zone)"
