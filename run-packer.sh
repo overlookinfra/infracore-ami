@@ -18,4 +18,4 @@ done
 echo Purging build nodes
 ssh pe-mom1-prod.ops.puppetlabs.net \
   'sudo puppet query nodes "group=aws and function=template and stage=dev" \
-  | xargs -r echo sudo puppet node purge'
+  | xargs -r sudo puppet node purge'
