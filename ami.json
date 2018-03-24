@@ -52,6 +52,8 @@
     },
     "instance_type": "t2.micro",
     "subnet_id": "subnet-5d2df02a",
+    "temporary_security_group_source_cidr": "10.0.0.0/8",
+    "ssh_interface": "private_ip",
     "availability_zone": "us-west-2a",
     "ssh_username": "{{user `source_ami_user`}}",
     "ami_name": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
