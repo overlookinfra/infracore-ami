@@ -1,12 +1,22 @@
 #!/bin/bash
 
 # Run when the instance first boots, and never again.
+echo Starting instance-first-boot.sh
 
 export PATH="/opt/puppetlabs/bin:$PATH"
 
 # This is how you parse yaml in bash
 fqdn=$(grep '^fqdn:' /var/lib/cloud/instance/user-data.txt | cut -f2- -d' ')
 autosign_token=$(grep '^autosign_token:' /var/lib/cloud/instance/user-data.txt | cut -f2- -d' ')
+environment=$(grep '^environment:' /var/lib/cloud/instance/user-data.txt | cut -f2- -d' ')
+
+echo Got user-data fqdn: $fqdn
+echo Got user-data autosign_token: $autosign_token
+echo Got user-data environment: $environment
+
+# Default environment is production
+environment=${environment:-production}
+echo Using environment: $environment
 
 # We get the FQDN from user-data directly because Debian relies on /etc/hosts
 # for hostname -f. Chicken and egg.
@@ -30,10 +40,28 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 EOF
 
-# Set up puppet
-puppet config --section agent set certname "$certname"
-puppet config --section agent set environment production
+sed -i -e "s/^send host-name .*;/send host-name ${hostname};/" /etc/dhcp/dhclient.conf
 
+cat <<EOF >/etc/cloud/cloud.cfg
+preserve_hostname: true
+manage_etc_hosts: false
+EOF
+
+# This will fail if the correct IAM profile is not set
+echo Attempting to create: ${certname}. 3600 IN A $(hostname -I)
+puppet resource route53_a_record "${certname}." \
+  ensure=present \
+  zone='certs.puppet.net.' \
+  ttl=3600 \
+  values="$(hostname -I)"
+
+# Set up puppet
+echo Configuring puppet.conf:
+puppet config --section agent set certname "$certname"
+puppet config --section agent set environment "$environment"
+cat /etc/puppetlabs/puppet/puppet.conf
+
+echo Installing autosign token
 cat <<EOF >$(puppet config --section main print confdir)/csr_attributes.yaml
 custom_attributes:
   challengePassword: "${autosign_token}"
@@ -45,4 +73,8 @@ extension_requests:
   pp_region: "$(curl -sS http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')"
 EOF
 
+
+echo Running puppet
 puppet agent --test || true
+
+echo Finished instance-first-boot.sh
