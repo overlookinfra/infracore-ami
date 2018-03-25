@@ -29,7 +29,7 @@ fi
 
 # 169.254.169.254 is the AWS EC2 metadata service
 cloud_id=$(curl -sS http://169.254.169.254/latest/meta-data/instance-id | tr -d -)
-certname=$(hostname -s)-${cloud_id}.certs.puppet.net
+certname="$(hostname -s)-${cloud_id}.certs.puppet.net"
 
 # Install Puppet, but don't run it
 curl -sSk https://puppetca.ops.puppetlabs.net:8140/packages/current/install.bash \
