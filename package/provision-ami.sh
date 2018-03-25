@@ -13,6 +13,11 @@ set -o pipefail
 
 export PATH="/opt/puppetlabs/bin:$PATH"
 
+# Fix FQDN on Debian 7. This stanza can be safely removed when Debian 7 is dropped.
+if ! hostname -d &>/dev/null ; then
+  echo "127.0.1.1 $(hostname -s).ops.puppetlabs.net $(hostname -s)" >>/etc/hosts
+fi
+
 if command -v apt-get >/dev/null ; then
   apt-get update
   export DEBIAN_FRONTEND=noninteractive
