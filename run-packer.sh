@@ -9,10 +9,15 @@ fi
 
 source $(command -v assume-role)
 
+mkdir -p logs
+
 for release in "$@" ; do
   assume-role ops Administrator
   export AUTOSIGN_TOKEN=$(./generate-autosign-token.sh)
-  packer build -var-file "$release" ami.json
+  packer build -var-file "$release" ami.json \
+    | tee logs/$(date +%Y-%m-%d_%H:%M:%S)_$(basename $release .json).log
+  echo
+  echo
 done
 
 echo Purging build nodes
