@@ -45,7 +45,7 @@ extension_requests:
 EOF
 
 # Run Puppet twice to ensure it coallesces
-puppet agent --test --waitforcert 15 --server puppetca.ops.puppetlabs.net || true
+puppet agent --test --waitforcert 15 --server puppetca.ops.puppetlabs.net --environment aws_template || true
 puppet agent --test || true
 
 # Validate that the server works
