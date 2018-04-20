@@ -75,6 +75,6 @@ EOF
 
 
 echo Running puppet
-puppet agent --test || true
+puppet agent --test
 
 echo Finished instance-first-boot.sh
