@@ -45,7 +45,7 @@ extension_requests:
 EOF
 
 # Run Puppet twice to ensure it coallesces
-puppet agent --test --waitforcert 15 --server puppetca.ops.puppetlabs.net --environment aws_template || true
+puppet agent --test --waitforcert 15 --server puppetca.ops.puppetlabs.net || true
 puppet agent --test || true
 
 # Validate that the server works
@@ -55,6 +55,18 @@ if ! ls -1 /home | fgrep -qvxe admin -e centos ; then
 fi
 
 puppet resource service puppet ensure=stopped enable=false
+
+cat >/etc/motd <<EOF
+               __
+              / _) - Hello.
+     _.----._/ /     I'm still booting.
+    /         /
+ __/ (  | (  |
+/__.-'|_|--|_|
+
+AMI generated $(date '+%Y-%m-%d %H:%M:%S %Z')
+
+EOF
 
 # Remove puppet agent cron job, along with all others
 crontab -r
