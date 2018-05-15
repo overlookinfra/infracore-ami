@@ -14,9 +14,14 @@ mkdir -p logs
 for release in "$@" ; do
   assume-role ops Administrator
   export AUTOSIGN_TOKEN=$(./generate-autosign-token.sh)
-  packer build -var-file "$release" ami.json \
-    | tee logs/$(date +%Y-%m-%d_%H:%M:%S)_$(basename $release .json).log
+  log_file=logs/$(date +%Y-%m-%d_%H:%M:%S)_$(basename $release .json).log
+  packer build -var-file "$release" ami.json | tee "$log_file"
   echo
+
+  # Get the AMI ID produced
+  release_code=$(jq -r '"\(.distro)\(.distro_version)"' < "$release")
+  echo Setting AMI for $release_code
+  grep '^us-west-2: ami-' "$log_file" | cut -f2 -d' ' | tr -d '\n' | curl -kisST - "https://consul.service.consul.puppet.net:8500/v1/kv/infracore/ami/us-west-2/$release_code"
   echo
 done
 
