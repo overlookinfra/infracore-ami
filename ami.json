@@ -19,24 +19,24 @@
     "token": "{{user `aws_session_token`}}",
     "region": "us-west-2",
     "tags": {
-      "created_by": "daniel.parks@puppet.com",
+      "created_by": "discuss-infracore@puppet.com",
       "department": "SRE",
-      "project": "Daniel fools with Packer",
+      "project": "InfraCore base AMIs",
       "distro": "{{user `distro`}}",
       "distro_version": "{{user `distro_version`}}",
       "Name": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
     },
     "snapshot_tags": {
-      "created_by": "daniel.parks@puppet.com",
+      "created_by": "discuss-infracore@puppet.com",
       "department": "SRE",
-      "project": "Daniel fools with Packer",
+      "project": "InfraCore base AMIs",
       "ami": "infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}",
       "Name": "AMI infracore-{{user `distro`}}-{{user `distro_version`}}-{{user `timestamp` | clean_ami_name}}"
     },
     "run_tags": {
-      "created_by": "daniel.parks@puppet.com",
+      "created_by": "discuss-infracore@puppet.com",
       "department": "SRE",
-      "project": "Daniel fools with Packer",
+      "project": "InfraCore base AMIs",
       "lifetime": "1h"
     },
     "source_ami_filter": {
