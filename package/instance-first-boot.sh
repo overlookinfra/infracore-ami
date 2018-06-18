@@ -73,8 +73,7 @@ extension_requests:
   pp_region: "$(curl -sS http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')"
 EOF
 
-
 echo Running puppet
-puppet agent --test
+puppet agent --test --waitforcert 15
 
 echo Finished instance-first-boot.sh
