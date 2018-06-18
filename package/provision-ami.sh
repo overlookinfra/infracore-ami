@@ -85,6 +85,8 @@ cp "${package_path}/instance-first-boot.sh" /var/lib/cloud/scripts/per-once/
 
 rm -rf "$package_path"
 
+rm /opt/puppetlabs/facter/facts.d/profile_metadata.yaml
+
 # Reset cloud-init
 rm -rf /var/lib/cloud/instances/*
 rm -f /var/lib/cloud/instance
