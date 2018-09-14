@@ -74,6 +74,6 @@ extension_requests:
 EOF
 
 echo Running puppet
-puppet agent --test --waitforcert 15
+puppet agent --test --waitforcert 5
 
 echo Finished instance-first-boot.sh

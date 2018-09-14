@@ -45,7 +45,7 @@ extension_requests:
 EOF
 
 # Run Puppet twice to ensure it coallesces
-puppet agent --test --waitforcert 15 --server puppetca.ops.puppetlabs.net || true
+puppet agent --test --waitforcert 5 --server puppetca.ops.puppetlabs.net || true
 # There is some sort of race condition that sometimes causes the second run
 # to fail.
 sleep 5
