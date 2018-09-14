@@ -9,6 +9,8 @@ fi
 
 source $(command -v assume-role)
 
+consul_kv="https://consul.service.consul.puppet.net:8500/v1/kv"
+
 mkdir -p logs
 
 for release in "$@" ; do
@@ -20,8 +22,12 @@ for release in "$@" ; do
 
   # Get the AMI ID produced
   release_code=$(jq -r '"\(.distro)\(.distro_version)"' < "$release")
-  echo Setting AMI for $release_code
-  grep '^us-west-2: ami-' "$log_file" | cut -f2 -d' ' | tr -d '\n' | curl -kisST - "https://consul.service.consul.puppet.net:8500/v1/kv/infracore/ami/us-west-2/$release_code"
+
+  echo Setting AMI information for $release_code:
+  ami=$(grep '^us-west-2: ami-' "$log_file" | cut -f2 -d' ' | tr -d '\n')
+  aws --region us-west-2 ec2 describe-images --image-ids "${ami}" \
+    | jq -r '.Images[]' \
+    | curl -ksST - "${consul_kv}/infracore/ami/us-west-2/$release_code"
   echo
 done
 
