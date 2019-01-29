@@ -27,7 +27,7 @@ cloud_id=$(curl -sS http://169.254.169.254/latest/meta-data/instance-id | tr -d 
 certname="$(hostname -s)-${cloud_id}.certs.puppet.net"
 
 # Install Puppet, but don't run it
-curl -sSk https://puppetca.ops.puppetlabs.net:8140/packages/current/install.bash \
+curl -sSk https://puppet.ops.puppetlabs.net:8140/packages/current/install.bash \
   | bash -s -- \
     "agent:certname=$certname" \
     --puppet-service-ensure stopped \
@@ -45,7 +45,7 @@ extension_requests:
 EOF
 
 # Run Puppet twice to ensure it coallesces
-puppet agent --test --waitforcert 5 --server puppetca.ops.puppetlabs.net || true
+puppet agent --test --waitforcert 5 --server puppet.ops.puppetlabs.net || true
 # There is some sort of race condition that sometimes causes the second run
 # to fail.
 sleep 5
